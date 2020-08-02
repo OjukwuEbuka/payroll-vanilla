@@ -40,11 +40,10 @@ switch ($jsonDetails['fetch']) {
     case 'school_payroll':
         $sch_id = $jsonDetails['school'];
         $stf_query = $conn->query("SELECT st.StaffID, st.Firstname, st.Lastname, st.Other_names, g.grade_level, p.grade_salary FROM sch_staff st LEFT JOIN payroll_staff_grade_level g ON st.StaffID=g.staff_id LEFT JOIN payroll_salary_structure p ON g.grade_level=p.grade_level WHERE st.school_id='$sch_id' ORDER BY st.Lastname ASC");
-        $sch_name = $conn->query("SELECT school_name from schools where school_id='$sch_id' LIMIT 1")
-            ->fetch(PDO::FETCH_ASSOC)['school_name'];
+        $school = $conn->query("SELECT school_id, school_name from schools where school_id='$sch_id' LIMIT 1");
         // print_r($stf_query);
         $payroll_fields = $conn->query("SELECT * from payroll_fields where status='1' ");
-        echo json_encode(['staff'=>getQuery($stf_query), 'fields'=>getQuery($payroll_fields), 'schoolName'=>$sch_name]);
+        echo json_encode(['staff'=>getQuery($stf_query), 'fields'=>getQuery($payroll_fields), 'school'=>getQuery($school)]);
         break;
 
     case 'grade_level':

@@ -89,19 +89,32 @@ function staffSalaryTableFxn(res){
     let snum = 1;
     let pay_heads = '';
     let pay_fields = '';
+    let generalInput = '';
+
     res.fields.forEach(field => {
         pay_heads += `<th>${field.field_name}</th>`;
-        pay_fields += `<td><input type='number' class='payinp ${field.field_slug}' data-action='${field.field_action}'></td>`
+        pay_fields += `<td><input type='number' class='payinp ${field.field_slug}'
+        data-field='${field.field_slug}' 
+        data-action='${field.field_action}'></td>`
+        generalInput += `
+            <div class='input-group mb-3'>
+                <div class='input-group-prepend'>
+                    <span class='input-group-text'>${field.field_name}</span>
+                </div>
+                <input type='number' id='gen_${field.field_slug}_val' data-field='${field.field_slug}'>
+            </div>
+        `
     })
     let staffTable = `        
         <div class='row bg-secondary pt-2 pb-2 mb-2 text-white rounded'>
             <div class='col-12 col-md-4 pb-2'> Date: <input type=date> </div>
             <div class='col-12 pt-1 border-top border-light'>
-                <h3 class='text-center'>${res.schoolName}</h3>
+                <h3 class='text-center'>${res.school[0].school_name}</h3>
+                <input type='hidden' id='school_id' value='${res.school[0].school_id}' >
             </div>
         </div>
         <div class='row'>
-            <button class='btn btn-secondary' id='generalBonus'>ADD GENERAL BONUS</button>
+            <button class='btn btn-secondary' id='generalValues'>APPLY GENERAL VALUES</button>
         </div>
         <table class='table table-bordered table-striped table-sm table-responsive mt-2' >
         <thead class='bg-secondary text-white text-center'>
@@ -126,7 +139,14 @@ function staffSalaryTableFxn(res){
     staffTable += `
         </tbody>
         </table>
-        <button class='mt-4 mb-4 btn btn-block btn-secondary'> SUBMIT PAYROLL </button>`
+        <button class='mt-4 mb-4 btn btn-block btn-secondary' id='submitPayroll'> SUBMIT PAYROLL </button>`
+
+    document.querySelector('#payrollModal #payrollModalLabel').textContent = 'APPLY GENERAL VALUES';
+    document.querySelector('#payrollModal .modal-body').innerHTML = generalInput;
+    document.querySelector('#payrollModal .modal-footer').innerHTML = `
+    <button type="button" class="btn btn-success" id='apply_gen_values' data-dismiss='modal'>Apply</button>`;
+
+
     return staffTable;
 }
 

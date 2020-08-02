@@ -1,13 +1,12 @@
 import {homeContent} from './mainContent.js';
-import * as page from './DOMFunc.js';
 import {
     schoolCallBack, 
     staffCallBack, 
-    schoolPayrollCallBack,
     schoolListSalaryCallBack,
     handleDOMAJAXRes,
     viewStaffBtnInit,
-    gradeLevelCallBack
+    gradeLevelCallBack,
+    loadSpinner,
 } from './AJAXCallbacks.js';
 
 /********Load data into index page******** */
@@ -57,6 +56,7 @@ function viewSchoolFxn(e){
     e.preventDefault();
     const title = 'View Staff';
     document.title = title;
+    document.querySelector('main').innerHTML = loadSpinner;
     handleDOMAJAXRes('queryPage.php', title, {fetch: 'schools'}, schoolCallBack, 'viewSchool');
 }
 
@@ -70,6 +70,7 @@ const staffProfileBtnInit = () => {
     //         e.preventDefault();
     //         const title = 'View Staff';
     //         document.title = title;
+            // document.querySelector('main').innerHTML = loadSpinner;
     //         handleDOMAJAXRes('queryPage.php', title, {fetch: 'staff', school: btn.dataset.sch}, staffCallBack, 'viewStaff');
     //     })
     // })
@@ -81,6 +82,7 @@ function payStaffSalaryFxn(e){
     e.preventDefault();
     const title = 'View Staff';
     document.title = title;
+    document.querySelector('main').innerHTML = loadSpinner;
     handleDOMAJAXRes('queryPage.php', title, {fetch: 'schools_salary'}, schoolListSalaryCallBack, 'viewSchool');
 }
 
@@ -131,8 +133,8 @@ function gradeLevelPayFxn(e){
     e.preventDefault();
     const title = 'Grade Level';
     const content = `<h3>Grade Level</h3>`;
-    document.querySelector('main').innerHTML = content;
     document.title = title;
+    document.querySelector('main').innerHTML = loadSpinner;
     history.pushState({content, title}, 'Grade Level');
     handleDOMAJAXRes('queryPage.php', title, {fetch: 'grade_level'}, gradeLevelCallBack, 'gradeLevel');
 }
