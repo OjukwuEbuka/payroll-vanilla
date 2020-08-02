@@ -123,9 +123,9 @@ function staffSalaryTableFxn(res){
     })
     let staffTable = `        
         <div class='row bg-secondary pt-2 pb-2 mb-2 text-white rounded'>
-            <div class='col-12 col-md-4 pb-2'> Dater: <input type=date> </div>
+            <div class='col-12 col-md-4 pb-2'> Date: <input type=date id='payroll_date'> </div>
             <div class='col-12 pt-1 border-top border-light'>
-                <h3 class='text-center'>${res.school[0].school_name}</h3>
+                <h3 id='sch_name' class='text-center'>${res.school[0].school_name}</h3>
                 <input type='hidden' id='school_id' value='${res.school[0].school_id}' >
             </div>
         </div>
@@ -201,6 +201,27 @@ const gradeLevelTableFxn = res => {
 
 }
 
+/************** */
+const submittedDetailsFxn = res =>{
+    return `
+        <h2 class='text-center m-2'>${res.school_id}</h2>
+        <div class='row bg-secondary text-white text-center rounded'>
+            <div class='col-md-12'> <h4>SALARIES PAID SUCCESSFULLY</h4> </div>
+            <div class='col-md-2'></div>
+            <div class='col-md-6'>Total Salary Paid:</div>
+            <div class='col-md-4'>
+                ${res.total_salary.toLocaleString('en-NG', {style: 'currency', currency:'NGN'})}
+            </div>
+        </div>
+        <div class='row mt-4'>
+            <div class='col-md-12 text-center'> <button class='btn btn-outline-secondary' id='continuePay'>
+                Continue Payroll</button> 
+            </div>
+        </div>
+    `;
+
+}
+
 
 function number_format(number, decimals, dec_point, thousands_sep){
     let n = !isFinite(+number) ? 0 : +number,
@@ -222,4 +243,11 @@ function number_format(number, decimals, dec_point, thousands_sep){
     return s.join(dec);
 }
 
-export {schoolsTable, staffTableFxn, schoolsSalaryTable, staffSalaryTableFxn, gradeLevelTableFxn};
+export {
+    schoolsTable, 
+    staffTableFxn, 
+    schoolsSalaryTable, 
+    staffSalaryTableFxn, 
+    gradeLevelTableFxn,
+    submittedDetailsFxn,
+};

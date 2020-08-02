@@ -51,6 +51,12 @@ switch ($jsonDetails['fetch']) {
         echo json_encode(["grade_level"=>getQuery($grade_qs)]);
         break;
     
+    case 'create_payroll':
+        $payroll_base = $jsonDetails['data']['payDateObj'];
+        $school_pay = $jsonDetails['data']['payPackObj'];
+        echo json_encode($payroll_base);
+        break;
+
     default:
         # code...
         break;

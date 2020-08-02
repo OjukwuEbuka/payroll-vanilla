@@ -1,8 +1,12 @@
 import * as page from './DOMFunc.js';
 import {schoolPayrollCallBack} from './payrollPage.js';
 
-let loadSpinner = `<div class='spinner-border' role='status'> 
-    <span class='sr-only'>Loading...<span></div>`;
+let loadSpinner = `
+    <div class='spinnerDiv'>
+        <div class='spinner-border' role='status'> 
+            <span class='sr-only'>Loading...<span>
+        </div>
+    </div>`;
 
 
 

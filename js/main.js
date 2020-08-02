@@ -140,6 +140,7 @@ function gradeLevelPayFxn(e){
     handleDOMAJAXRes('queryPage.php', title, {fetch: 'grade_level'}, gradeLevelCallBack, 'gradeLevel');
 }
 
+export {createPayrollFxn};
 
 // function AJAX(method, url, Fxn, OBJ={}){
 

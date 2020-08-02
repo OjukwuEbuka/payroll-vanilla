@@ -68,4 +68,6 @@ ALTER TABLE payroll_staff_grade_level CHANGE staff_id staff_id VARCHAR(100) NOT 
 
 -- ALTER TABLE payroll_fields ADD COLUMN field_action VARCHAR(50) NOT NULL AFTER field_description;
 -- ALTER TABLE payroll_fields ADD COLUMN field_slug VARCHAR(200) NOT NULL AFTER field_description;
+-- ALTER TABLE payroll_date ADD COLUMN school_id INT(11) NOT NULL AFTER id;
+-- ALTER TABLE payroll_date ADD COLUMN total_salary_paid DECIMAL(15, 2) NOT NULL AFTER school_id;
 -- UPDATE payroll_fields SET field_action='add';

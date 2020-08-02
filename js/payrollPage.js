@@ -1,5 +1,6 @@
-import {staffSalaryTableFxn} from './DOMFunc.js';
-
+import {staffSalaryTableFxn, submittedDetailsFxn} from './DOMFunc.js';
+import {handleDOMAJAXRes, loadSpinner} from './AJAXCallbacks.js';
+import {createPayrollFxn} from './main.js';
 
 
 /**********CALLBACK FXN TO LOAD SCHOOL PAYROLL PAGE ********* */
@@ -35,7 +36,6 @@ const payrollCalc = () => {
 /*******FXN TO CALCULATE NET SALARY FROM INPUT FIELDS****** */
 let eventAct = trow =>{
     let gradeValue = +trow.querySelector('.gradeSalary').dataset.pay;
-        console.log(gradeValue)
         let netSal = trow.querySelector('.netSalary');
         trow.querySelectorAll('.payinp').forEach(inpCalc => {
         let inpVal = +inpCalc.value;
@@ -75,20 +75,83 @@ const generalValuesFxn = () => {
 
 /********FXN TO PACK PAYROLL VALUES******** */
 const packPayroll = () => {
-    let payPackObj = {};
-    let school_id = document.querySelector('#school_id').value;
+    let payPackObj = {},
+        total_salary = 0,
+        school_id = document.querySelector('#school_id').value,
+        pay_date = document.querySelector('#payroll_date').value;
+    if (!checkDate(pay_date)) return false;
+    
     let payRows = document.querySelectorAll('table tbody tr');
     payRows.forEach(trow => {
-        let rowFields = trow.querySelectorAll('input');
-        let rowObj = {};
+        let rowFields = trow.querySelectorAll('input'),
+            netSalary = trow.querySelector('.netSalary').textContent,
+            rowObj = {};
+        total_salary += +netSalary;
         rowFields.forEach(field => rowObj[field.dataset.field] = field.value);
         payPackObj[trow.getAttribute('id')] = {
             ...rowObj,
             school_id,
-            netSalary: trow.querySelector('.netSalary').textContent
+            netSalary
         }
     });
-    console.log(payPackObj);
+    submitModal(total_salary);
+    let payDateObj = {school_id, pay_date, total_salary};
+    document.querySelector('#sendPayrollBtn').addEventListener('click', e =>{
+        e.preventDefault();
+        document.querySelector('main').innerHTML = loadSpinner;
+        handleDOMAJAXRes('queryPage.php', 
+            'Payroll Submitted', 
+            {fetch: 'create_payroll', data: {payDateObj, payPackObj}}, 
+            payrollSubmittedFxn, 'viewStaff');
+        console.log(payDateObj, total_salary);
+    })
+        
+}
+
+/*******Check selection of payroll date******* */
+const checkDate = pay_date => {
+    let datebox = document.querySelector('#payroll_date');
+    if(pay_date == ''){
+        alert('Please select a date.');
+        datebox.classList.add('text-danger');
+        datebox.addEventListener('change', ()=>{
+            if(datebox.value != '') datebox.classList.remove('text-danger');
+        })
+        return false;
+    }
+    return true;
+}
+
+
+/**********Submit Payroll Modal******** */
+const submitModal = total_salary => {    
+    document.querySelector('#payrollModal #payrollModalLabel').innerHTML = `
+        SUBMIT PAYROLL
+        <h4>${document.querySelector('#sch_name').textContent}</h4>
+    `;
+    document.querySelector('#payrollModal .modal-body').innerHTML = `
+        <div class='row'>
+            <div class='col-8'>Total Salary to be paid: </div>
+            <div class='col-4'>${total_salary.toLocaleString('en-NG', {style:'currency', currency:'NGN'})} </div>
+        </div>
+    `;
+    document.querySelector('#payrollModal .modal-footer').innerHTML = `    
+        <button type="button" class="btn btn-success" id='sendPayrollBtn' data-dismiss='modal'>Submit</button>
+        <button type="button" class="btn btn-danger" id='cancelPayroll' data-dismiss='modal'>Cancel</button>
+    `
+    $('#payrollModal').modal('show')
+}
+
+
+/********CALLBACK FXN FOR SUBMITTED PAYROLL******* */
+const payrollSubmittedFxn = res => {
+    let pageContent = `
+        ${submittedDetailsFxn(res)}
+    `;
+    document.querySelector('main').innerHTML = pageContent;
+    // schoolPayrollBtnInit();
+    document.querySelector('#continuePay').addEventListener('click', createPayrollFxn)
+    return pageContent;
 }
 
 

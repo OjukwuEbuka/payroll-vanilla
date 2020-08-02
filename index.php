@@ -26,13 +26,22 @@
             height:100vh;
             position: fixed;
         }
+
+        .spinnerDiv{
+          width: 100%;
+          height: 100vh;
+          padding-left: 40%;
+          display: flex;
+          flex-direction: column;
+          align-content: center;
+          justify-content: center;
+        }
+
         .spinner-border{
-          position: relative;
-          left: 45%;
           width: 10rem !important;
           height: 10rem !important;
         }
-
+        
         .payinp{
           max-width: 5rem;
           max-height: 1.5rem;
