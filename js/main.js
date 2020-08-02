@@ -1,7 +1,7 @@
 import {homeContent} from './mainContent.js';
 import {
     schoolCallBack, 
-    staffCallBack, 
+    schoolPayrollBtnInit, 
     schoolListSalaryCallBack,
     handleDOMAJAXRes,
     viewStaffBtnInit,
@@ -18,8 +18,8 @@ document.addEventListener('DOMContentLoaded', e => {
 
 /************List of Link Controls  Variables************ */
 const viewSchool = document.querySelector('#viewSchoolStaff');
-const payStaffSalary = document.querySelector('#payStaffSalary');
-const payBySchool = document.querySelector('#payBySchool');
+const createPayroll = document.querySelector('#createPayroll');
+// const payBySchool = document.querySelector('#payBySchool');
 const generalReports = document.querySelector('#generalReports');
 const schoolReports = document.querySelector('#schoolReports');
 const monthlyReports = document.querySelector('#monthlyReports');
@@ -33,13 +33,14 @@ window.onpopstate = e => {
     document.title = data.title;
     document.querySelector('main').innerHTML = data.content;
     if(data.resPage == 'viewSchool') viewStaffBtnInit();
+    if(data.resPage == 'createPayroll') schoolPayrollBtnInit();
 }
 
 
 /************Link Navigation Action************* */
 viewSchool.addEventListener('click', viewSchoolFxn)
-payStaffSalary.addEventListener('click', payStaffSalaryFxn)
-payBySchool.addEventListener('click', payBySchoolFxn)
+createPayroll.addEventListener('click', createPayrollFxn)
+// payBySchool.addEventListener('click', payBySchoolFxn)
 generalReports.addEventListener('click', generalReportsFxn)
 schoolReports.addEventListener('click', schoolReportsFxn)
 monthlyReports.addEventListener('click', monthlyReportsFxn)
@@ -78,12 +79,12 @@ const staffProfileBtnInit = () => {
 
 
 /*************Function to Pay Staff Salary************* */
-function payStaffSalaryFxn(e){
+function createPayrollFxn(e){
     e.preventDefault();
-    const title = 'View Staff';
+    const title = 'School Payroll';
     document.title = title;
     document.querySelector('main').innerHTML = loadSpinner;
-    handleDOMAJAXRes('queryPage.php', title, {fetch: 'schools_salary'}, schoolListSalaryCallBack, 'viewSchool');
+    handleDOMAJAXRes('queryPage.php', title, {fetch: 'schools_salary'}, schoolListSalaryCallBack, 'createPayroll');
 }
 
 

@@ -76,8 +76,7 @@
             </a>
             <div class="collapse" id="managepayroll">
                 <ul class="" style="list-style-type:none;">
-                    <li class="nav-item"><a href="#" id="payStaffSalary"> Pay Staff Salary </a></li>
-                    <li class="nav-item"><a href="#" id="payBySchool"> Pay By School</a></li>
+                    <li class="nav-item"><a href="#" id="createPayroll"> Create Payroll </a></li>
                     <li class="nav-item"><a href="#"> Link 1</a></li>
                 </ul>                
             </div>

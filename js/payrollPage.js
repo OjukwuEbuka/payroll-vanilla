@@ -34,7 +34,8 @@ const payrollCalc = () => {
 
 /*******FXN TO CALCULATE NET SALARY FROM INPUT FIELDS****** */
 let eventAct = trow =>{
-    let gradeValue = +trow.querySelector('.gradeSalary').textContent;
+    let gradeValue = +trow.querySelector('.gradeSalary').dataset.pay;
+        console.log(gradeValue)
         let netSal = trow.querySelector('.netSalary');
         trow.querySelectorAll('.payinp').forEach(inpCalc => {
         let inpVal = +inpCalc.value;
@@ -45,7 +46,7 @@ let eventAct = trow =>{
             gradeValue -= inpVal;
         }
     })
-    netSal.textContent = gradeValue < 0 ? 'Error' :gradeValue.toFixed(2);
+    netSal.textContent = gradeValue < 0 ? 'Error' : gradeValue.toFixed(2);
 };
 
 /********FXN TO ACTIVATE GENERAL BONUS MODAL******** */

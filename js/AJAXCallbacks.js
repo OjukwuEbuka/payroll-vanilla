@@ -33,7 +33,7 @@ function staffCallBack(res){
 /*********CALLBACK FUNCTION TO LIST SCHOOLS WITH TOTAL SALARY ******** */
 function schoolListSalaryCallBack(res){
     let pageContent = `
-        <h2 class='pb-3 text-center'>STAFF LIST</h2>
+        <h2 class='pb-3 text-center'>SCHOOL PAYROLL LIST</h2>
         ${page.schoolsSalaryTable(res)}
     `;
     document.querySelector('main').innerHTML = pageContent;
@@ -125,4 +125,5 @@ export {
     viewStaffBtnInit,
     gradeLevelCallBack,
     loadSpinner,
+    schoolPayrollBtnInit,
 }

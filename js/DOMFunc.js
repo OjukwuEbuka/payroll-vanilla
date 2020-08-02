@@ -1,3 +1,5 @@
+let naira = (1).toLocaleString('en-NG', {style:'currency', currency:"NGN"})[0];
+
 /******* FUNCTION TO CREATE SCHOOLS TABLE******** */
 function schoolsTable(res){
     let snum = 1;
@@ -26,8 +28,23 @@ function schoolsTable(res){
 /******* FUNCTION TO CREATE SCHOOLS SALARY TABLE******** */
 function schoolsSalaryTable(res){
     let snum = 1;
-    let schoolTable = `<table class='table table-bordered table-striped table-sm' >
-        <thead>
+    let staffSalary = res.salary.reduce((acc, sch) => {
+        return {
+            ...acc, 
+            [sch.school_id]: (+sch.salary).toLocaleString('en-NG', {style:'currency', currency:'NGN'})
+        }
+    }, {});
+    let totalSalary = res.salary.reduce((acc, sch) => acc += +sch.salary, 0);
+    let schoolTable = `
+        <div class='row bg-secondary bg-secondary pt-2 pb-2 mb-2 text-white rounded'>
+            <div class='col-12 pt-1 border-top border-light'>
+                <h3 class='text-center'>
+                Total Salary Payable: ${totalSalary.toLocaleString('en-NG', {style:'currency', currency:'NGN'})}
+                </h3>
+            </div>
+        </div>
+        <table class='table table-bordered table-striped table-sm' >
+        <thead class='text-white bg-secondary'>
             <th>S/No.</th>
             <th>Name</th>
             <th>Staff Size</th>
@@ -36,7 +53,6 @@ function schoolsSalaryTable(res){
         <thead>
         <tbody>
     `;
-    let staffSalary = res.salary.reduce((acc, sch) => {return {...acc, [sch.school_id]: sch.salary}}, {});
     // console.log(staffSalary);
     res.schools.forEach(sch => schoolTable += `
         <tr id='${sch.school_id}'>
@@ -107,7 +123,7 @@ function staffSalaryTableFxn(res){
     })
     let staffTable = `        
         <div class='row bg-secondary pt-2 pb-2 mb-2 text-white rounded'>
-            <div class='col-12 col-md-4 pb-2'> Date: <input type=date> </div>
+            <div class='col-12 col-md-4 pb-2'> Dater: <input type=date> </div>
             <div class='col-12 pt-1 border-top border-light'>
                 <h3 class='text-center'>${res.school[0].school_name}</h3>
                 <input type='hidden' id='school_id' value='${res.school[0].school_id}' >
@@ -120,9 +136,9 @@ function staffSalaryTableFxn(res){
         <thead class='bg-secondary text-white text-center'>
             <th>S/No.</th>
             <th>Name</th>
-            <th>Salary</th>
+            <th>Salary<br>(${naira})</th>
             ${pay_heads}
-            <th>Net Pay</th>
+            <th>Net Pay<br>(${naira})</th>
         <thead>
         <tbody>
     `;
@@ -130,7 +146,9 @@ function staffSalaryTableFxn(res){
         <tr id='${st.StaffID}'>
             <td>${snum++}</td>
             <td>${st.Lastname+' '+st.Firstname+' '+st.Other_names}</td>            
-            <td class='gradeSalary'>${st.grade_salary}</td>
+            <td class='gradeSalary' data-pay='${st.grade_salary}'>
+                ${(+st.grade_salary).toLocaleString('en-NG')}
+            </td>
             ${pay_fields}
             <td class='netSalary'>${st.grade_salary}</td>
         </tr>
@@ -181,6 +199,27 @@ const gradeLevelTableFxn = res => {
 
     return glTable;
 
+}
+
+
+function number_format(number, decimals, dec_point, thousands_sep){
+    let n = !isFinite(+number) ? 0 : +number,
+        prec = !isFinite(+decimals) ? 0 : Math.abs(decimals),
+        sep = (typeof thousands_sep === 'undefined') ? ',' : thousands_sep,
+        dec = (typeof dec_point === 'undefined') ? '.' : dec_point,
+        toFixedFix = (n, prec) => {
+            let k = Math.pow(10, prec);
+            return Math.round(n * k ) / k;
+        },
+        s = (prec ? toFixedFix(n, prec) : Math.round(n)).toString().split('.');
+    if(s[0].length > 3){
+        s[0] = s[0].replace(/\B(?=(?:\d{3})+(?!\d))/g, sep);
+    }
+    if((s[1] || '').length < prec){
+        s[1] = s[1] || '';
+        s[1] += new Array(prec - s[1].length + 1).join('0');
+    }
+    return s.join(dec);
 }
 
 export {schoolsTable, staffTableFxn, schoolsSalaryTable, staffSalaryTableFxn, gradeLevelTableFxn};
