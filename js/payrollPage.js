@@ -1,6 +1,7 @@
 import {staffSalaryTableFxn, submittedDetailsFxn} from './DOMFunc.js';
-import {handleDOMAJAXRes, loadSpinner} from './AJAXCallbacks.js';
+import {handleDOMAJAXRes, loadSpinner, handleAJAX, schoolReportBtnInit} from './AJAXCallbacks.js';
 import {createPayrollFxn} from './main.js';
+
 
 
 /**********CALLBACK FXN TO LOAD SCHOOL PAYROLL PAGE ********* */
@@ -56,6 +57,7 @@ const generalValuesFxn = () => {
     let oldGenVals = {};
     generalValuesBtn.addEventListener('click', e => {
         e.preventDefault();        
+        smallerModal();
         $('#payrollModal').modal('show');
         oldGen.forEach(val => oldGenVals[val.dataset.field] = isNaN(+val.value) ? 0 : +val.value );
     })
@@ -80,18 +82,24 @@ const packPayroll = () => {
         school_id = document.querySelector('#school_id').value,
         pay_date = document.querySelector('#payroll_date').value;
     if (!checkDate(pay_date)) return false;
-    
+
+    /*********** CHECK PAYROLL EXISTS  *********** */
+    handleAJAX('queryPage.php', {fetch: 'check_payroll', 
+        data:{school_id, payDate: pay_date}}, checkPayrollExists)
+        
     let payRows = document.querySelectorAll('table tbody tr');
     payRows.forEach(trow => {
         let rowFields = trow.querySelectorAll('input'),
-            netSalary = trow.querySelector('.netSalary').textContent,
-            rowObj = {};
-        total_salary += +netSalary;
+            net_salary = trow.querySelector('.netSalary').textContent,
+            rowObj = {},
+            grade_salary = trow.querySelector('.gradeSalary').dataset.pay;
+        total_salary += +net_salary;
         rowFields.forEach(field => rowObj[field.dataset.field] = field.value);
         payPackObj[trow.getAttribute('id')] = {
             ...rowObj,
             school_id,
-            netSalary
+            net_salary,
+            grade_salary
         }
     });
     submitModal(total_salary);
@@ -103,9 +111,33 @@ const packPayroll = () => {
             'Payroll Submitted', 
             {fetch: 'create_payroll', data: {payDateObj, payPackObj}}, 
             payrollSubmittedFxn, 'viewStaff');
-        console.log(payDateObj, total_salary);
+        console.log(payDateObj, payPackObj);
     })
         
+}
+
+/**********Callback FXN to Check if Payroll exists********* */
+function checkPayrollExists(res){
+    if(res.check.length == 0){
+        return;
+    }else{
+        let payDate = new Date(res.check[0].pay_date)
+        document.querySelector('#payrollModal #payrollModalLabel').innerHTML = `
+            PAYROLL ALREADY APPROVED FOR THIS SCHOOL!
+        `;
+    document.querySelector('#payrollModal .modal-body').innerHTML = '';
+        document.querySelector('#payrollModal .modal-footer').innerHTML = `    
+            <button type="button" class="btn btn-success schoolReportBtn" 
+                id='' data-dismiss='modal' data-sch='${res.check[0].school_id}' data-val='${res.check[0].id}'>
+                GO TO REPORT</button>
+                <input type='hidden' id='currMonth' data-val='${payDate.getMonth()}' >
+                <input type='hidden' id='currYear' data-val='${payDate.getFullYear()}' >
+            <button type="button" class="btn btn-danger" id='' data-dismiss='modal'>Cancel</button>
+        `
+        smallerModal();
+        $('#payrollModal').modal('show')
+       schoolReportBtnInit();
+    }
 }
 
 /*******Check selection of payroll date******* */
@@ -131,14 +163,15 @@ const submitModal = total_salary => {
     `;
     document.querySelector('#payrollModal .modal-body').innerHTML = `
         <div class='row'>
-            <div class='col-8'>Total Salary to be paid: </div>
-            <div class='col-4'>${total_salary.toLocaleString('en-NG', {style:'currency', currency:'NGN'})} </div>
+            <div class='col-8 text-center'><h5>Total Salary to be paid: </h5></div>
+            <div class='col-4 text-center'><h5>${total_salary.toLocaleString('en-NG', {style:'currency', currency:'NGN'})} </h5></div>
         </div>
     `;
     document.querySelector('#payrollModal .modal-footer').innerHTML = `    
         <button type="button" class="btn btn-success" id='sendPayrollBtn' data-dismiss='modal'>Submit</button>
         <button type="button" class="btn btn-danger" id='cancelPayroll' data-dismiss='modal'>Cancel</button>
     `
+    smallerModal();
     $('#payrollModal').modal('show')
 }
 
@@ -150,8 +183,17 @@ const payrollSubmittedFxn = res => {
     `;
     document.querySelector('main').innerHTML = pageContent;
     // schoolPayrollBtnInit();
-    document.querySelector('#continuePay').addEventListener('click', createPayrollFxn)
+    let dateApp = new Date(document.querySelector('#dateVal').value),
+        m = dateApp.getMonth(),
+        y = dateApp.getFullYear();
+    console.log(dateApp);
+    document.querySelector('#continuePay').addEventListener('click', e =>createPayrollFxn(e, {m, y}))
     return pageContent;
+}
+
+function smallerModal(){
+    document.querySelector('#payrollModal .modal-dialog').classList.remove('wider');
+    document.querySelector('#payrollModal .modal-body').classList.remove('row');
 }
 
 

@@ -4,60 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Payroll</title>
-    <style>
-        .bg-border-radius {
-            margin: -400px auto 0;
-            width: 1000px;
-            height: 800px;
-            overflow: hidden;
-            border-radius: 0 0 30% 70%;
-            background-color: #0080C1;
-        }
-
-        li a:hover{
-            text-decoration: none;
-        }
-
-        nav .collapse ul li {
-            border-bottom: 0.05rem solid #ddd;
-        }
-
-        #sidebarMenu{
-            height:100vh;
-            position: fixed;
-        }
-
-        .spinnerDiv{
-          width: 100%;
-          height: 100vh;
-          padding-left: 40%;
-          display: flex;
-          flex-direction: column;
-          align-content: center;
-          justify-content: center;
-        }
-
-        .spinner-border{
-          width: 10rem !important;
-          height: 10rem !important;
-        }
-        
-        .payinp{
-          max-width: 5rem;
-          max-height: 1.5rem;
-          border-radius: .4rem;
-          border: none;
-          background-color: #dfdfdf;
-        }
-
-        th{
-          text-transform: Capitalize;
-        }
-
-        /* .headSelect{
-          border-radius: .5rem;
-        } */
-    </style>
+    <link rel="stylesheet" href="css/main.css">
     <!-- CSS only -->
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
 
@@ -68,7 +15,7 @@
     </div> -->
 <div class="container-fluid">
   <div class="row">
-    <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-dark sidebar collapse">
+    <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block oxblood sidebar collapse">
       <div class="sidebar-sticky pt-3">
         <ul class="nav flex-column">
           <li class="nav-item">
@@ -86,7 +33,6 @@
             <div class="collapse" id="managepayroll">
                 <ul class="" style="list-style-type:none;">
                     <li class="nav-item"><a href="#" id="createPayroll"> Create Payroll </a></li>
-                    <li class="nav-item"><a href="#"> Link 1</a></li>
                 </ul>                
             </div>
           </li>
@@ -98,8 +44,7 @@
             </a>
             <div class="collapse" id="payrollreports">
                 <ul class="" style="list-style-type:none;">
-                    <li class="nav-item"><a href="#" id="generalReports"> General Reports</a></li>
-                    <li class="nav-item"><a href="#" id="schoolReports"> School Reports</a></li>
+                    <li class="nav-item"><a href="#" id="generalReports"> School Reports</a></li>
                     <li class="nav-item"><a href="#" id="monthlyReports"> Monthly Reports</a></li>
                 </ul>                
             </div>
@@ -113,8 +58,6 @@
             <div class="collapse" id="managestaff">
                 <ul class="" style="list-style-type:none;">
                     <li class="nav-item"><a href="#" id="viewSchoolStaff"> View School Staff </a></li>
-                    <li class="nav-item"><a href="#"> Link 1</a></li>
-                    <li class="nav-item"><a href="#"> Link 1</a></li>
                 </ul>                
             </div>
           </li>
@@ -168,7 +111,7 @@
   <div class="modal-dialog" role="document">
     <div class="modal-content">        
       <div class="modal-header">
-          <h5 class="modal-title" id="payrollModalLabel">Staff Profile</h5>
+          <h5 class="modal-title text-center" id="payrollModalLabel">Staff Profile</h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times</span>
           </button>
@@ -187,6 +130,8 @@
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+<script src="js/graph/d3.min.js"></script>
+<script src="js/graph/margins.js" type="module"></script>
 <script src="js/main.js" type="module"></script>
 </body>
 </html>

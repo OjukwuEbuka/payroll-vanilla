@@ -2,21 +2,28 @@ import {homeContent} from './mainContent.js';
 import {
     schoolCallBack, 
     schoolPayrollBtnInit, 
+    schoolReportBtnInit,
     schoolListSalaryCallBack,
     handleDOMAJAXRes,
     viewStaffBtnInit,
     gradeLevelCallBack,
     loadSpinner,
+    monthSelectFxn,
+    handleAJAX,
+    schoolsReportCallback,
 } from './AJAXCallbacks.js';
+import {addChart} from './graph/margins.js';
 
 /********Load data into index page******** */
 document.addEventListener('DOMContentLoaded', e => {
     document.querySelector('main').innerHTML = homeContent;
+    handleAJAX('queryPage.php', {fetch:'total_chart'}, addChart);
     history.pushState({content: homeContent, title:'Dashboard'}, 'Dashboard', '');
 })
 
 
 /************List of Link Controls  Variables************ */
+let currDate = new Date();
 const viewSchool = document.querySelector('#viewSchoolStaff');
 const createPayroll = document.querySelector('#createPayroll');
 // const payBySchool = document.querySelector('#payBySchool');
@@ -33,7 +40,8 @@ window.onpopstate = e => {
     document.title = data.title;
     document.querySelector('main').innerHTML = data.content;
     if(data.resPage == 'viewSchool') viewStaffBtnInit();
-    if(data.resPage == 'createPayroll') schoolPayrollBtnInit();
+    if(data.resPage == 'createPayroll') {schoolPayrollBtnInit(), monthSelectFxn(), schoolReportBtnInit()};
+    if(data.resPage == 'schoolsReport') {schoolReportBtnInit(), monthSelectFxn()};
 }
 
 
@@ -42,7 +50,7 @@ viewSchool.addEventListener('click', viewSchoolFxn)
 createPayroll.addEventListener('click', createPayrollFxn)
 // payBySchool.addEventListener('click', payBySchoolFxn)
 generalReports.addEventListener('click', generalReportsFxn)
-schoolReports.addEventListener('click', schoolReportsFxn)
+// schoolReports.addEventListener('click', schoolReportsFxn)
 monthlyReports.addEventListener('click', monthlyReportsFxn)
 gradeLevelPay.addEventListener('click', gradeLevelPayFxn)
 // additionDeduction.addEventListener('click', additionDeductionFxn)
@@ -62,29 +70,14 @@ function viewSchoolFxn(e){
 }
 
 
-
-/*********FXN to fetch Staff for each School********* */
-const staffProfileBtnInit = () => {
-    let staffProfileBtn = document.querySelectorAll('.staffProfileBtn');
-    // staffProfileBtn.forEach(btn => {
-    //     btn.addEventListener('click', e => {
-    //         e.preventDefault();
-    //         const title = 'View Staff';
-    //         document.title = title;
-            // document.querySelector('main').innerHTML = loadSpinner;
-    //         handleDOMAJAXRes('queryPage.php', title, {fetch: 'staff', school: btn.dataset.sch}, staffCallBack, 'viewStaff');
-    //     })
-    // })
-}
-
-
 /*************Function to Pay Staff Salary************* */
-function createPayrollFxn(e){
+function createPayrollFxn(e, searchDate={m:currDate.getMonth(), y:currDate.getFullYear()}){
     e.preventDefault();
     const title = 'School Payroll';
     document.title = title;
     document.querySelector('main').innerHTML = loadSpinner;
-    handleDOMAJAXRes('queryPage.php', title, {fetch: 'schools_salary'}, schoolListSalaryCallBack, 'createPayroll');
+    // console.log(e, searchDate);
+    handleDOMAJAXRes('queryPage.php', title, {fetch: 'schools_salary', searchDate}, schoolListSalaryCallBack, 'createPayroll');
 }
 
 
@@ -99,13 +92,13 @@ function payBySchoolFxn(e){
 }
 
 /*************Function to View General Reports************* */
-function generalReportsFxn(e){
+function generalReportsFxn(e, searchDate={m:currDate.getMonth(), y:currDate.getFullYear()}){
     e.preventDefault();
     const title = 'General Reports';
-    const content = `<h3>General Reports</h3>`;
-    document.querySelector('main').innerHTML = content;
+    document.querySelector('main').innerHTML = loadSpinner;
     document.title = title;
-    history.pushState({content, title}, 'General Reports');
+    handleDOMAJAXRes('queryPage.php', title, {fetch: 'schools_report', searchDate}, schoolsReportCallback, 'schoolsReport');
+    // history.pushState({content, title}, 'General Reports');//schools_report
 }
 
 /*************Function to View School Payroll Reports************* */
@@ -140,7 +133,7 @@ function gradeLevelPayFxn(e){
     handleDOMAJAXRes('queryPage.php', title, {fetch: 'grade_level'}, gradeLevelCallBack, 'gradeLevel');
 }
 
-export {createPayrollFxn};
+export {createPayrollFxn, generalReportsFxn};
 
 // function AJAX(method, url, Fxn, OBJ={}){
 
