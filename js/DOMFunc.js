@@ -55,25 +55,40 @@ function schoolsSalaryTable(res){
         totalSalary = res.salary.reduce((acc, sch) => acc += +sch.salary, 0);
 
     let schoolTable = `
-        <div class='row oxblood pt-2 pb-2 mb-2 text-white rounded'>
-            <div class='col-12'>
-                <h4 class='text-center'>
-                Total Salary Payable: ${totalSalary.toLocaleString('en-NG', {style:'currency', currency:'NGN'})}
-                </h4>
+        <div class='row pt-2 pb-2 mb-2 rounded'>
+            <div class='col-12 col-md-4'>                
+                <div class='card pline'>
+                    <div class='card-body'>
+                        <h5 class='card-title'>Date: </h5>
+                        <h6>
+                            <span id='currMonth' data-val='${res.searchDate.m}'>${months[+res.searchDate.m]}</span>, 
+                            <span id='currYear'data-val='${res.searchDate.y}'>${res.searchDate.y}</span>
+                        </h6>
+                    </div>
+                </div>    
             </div>
-            <div class='col-12 pt-1 border-top border-light'>
-                <h5>Month: 
-                    <span id='currMonth' data-val='${res.searchDate.m}'>${months[+res.searchDate.m]}</span>, 
-                    <span id='currYear'data-val='${res.searchDate.y}'>${res.searchDate.y}</span>
-                </h5>
+            <div class='col-12 col-md-4'>
+                <div class='card pline'>
+                    <div class='card-body'>
+                        <h5 class='card-title'>Total Salary Payable: </h5>
+                        <h6>${totalSalary.toLocaleString('en-NG', {style:'currency', currency:'NGN'})}</h6>
+                    </div>
+                </div>
+            </div>
+            <div class='col-12 col-md-4'>
+                <div class='card pline'>
+                    <div class='card-body'>
+                        <h5 class='card-title'>Total Salary Approved: </h5>
+                        <h6>${totalSalary.toLocaleString('en-NG', {style:'currency', currency:'NGN'})}</h6>
+                    </div>
+                </div>
             </div>
         </div>
-        <div class='d-flex justify-content-center  flex-wrap'>
-            <div class='d-flex oxblood rounded p-2 align-items-center justify-content-center' style='width:50%;'>            
-                <div class='' style='width:50%;'><select id='chooseMonth' style='width:100% !important;'>${monthDrop}</select></div>
-                <div class='' style='width:50%;'><select id='chooseYear' style='width:100% !important;'>${yearDrop}</select></div>
-            </div>
-            <div class='pt-1 text-center' style='width:100%'><button class='btn btn-outline oxline' data-page='payroll' id='changeMonth'>SELECT</button></div>
+        <div class='row pline'>            
+            <div class='col-md-12'><select id='chooseMonth' style='width:20% !important;'>${monthDrop}</select></div>
+            <div class='col-md-12'><select id='chooseYear' style='width:20% !important;'>${yearDrop}</select></div>
+            
+            <div class='col-md-12 pt-1 text-center'><button class='btn btn-outline oxline' data-page='payroll' id='changeMonth'>SELECT</button></div>
         </div>
         <table class='table table-bordered table-striped table-sm mt-2' >
         <thead class='oxblood text-center'>
