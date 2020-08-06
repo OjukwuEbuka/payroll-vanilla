@@ -5,11 +5,13 @@ export function addChart(res) {
     //         id: sch.school_id
     //     }]
     // }, [])
-    const data = res.filter(sch => sch.school_id != '3');
+    // const exclud = ['0', '3', '11', '5', '2', '9', '1'];
+    // const data = res.filter(sch => !exclud.includes(sch.school_id));
+    const data = res;
 
-const margin = {top:20, right:0, bottom:150, left:60};
+const margin = {top:20, right:40, bottom:170, left:60};
 // const width = document.querySelector('body').clientWidth;
-const width = 700;
+const width = 750;
 const height = 400;
 
 const y = d3.scaleLinear()
@@ -26,6 +28,7 @@ const yTitle = g => g.append('text')
     .attr('font-family', 'sans-serif')
     .attr('font-size', 9)
     .attr('y', 10)
+    .attr('font-weight', 'bold')
     .text('Total Salary');
 
 
@@ -61,8 +64,11 @@ const xAxis = svg.append("g")
 
     
 xAxis.selectAll("text")
-.attr('font-size', 8)
-.attr("transform", "rotate(90)")
+.attr('font-size', 9)
+.attr('font-weight', 'bold')
+.attr("transform", "rotate(70)")
+.attr("x", "10")
+.attr("y", "-3")
 .style("text-anchor", "start");
 
 svg.append('g')
@@ -71,5 +77,38 @@ svg.append('g')
 svg.call(yTitle);
 
 document.querySelector('#chart').append(svg.node());
-console.log(res);
+// console.log(res);
+
+
+let snum = 1;
+let dRow = '';
+data.forEach(sch => dRow += `
+    <tr>
+        <td>${snum++}</td>
+        <td>${sch.Schoolname}</td>
+        <td>${(+sch.salary).toLocaleString('en-NG',{style:'currency', currency:'NGN'})}</td>
+        <td>${sch.size}</td>
+        <td>${(sch.salary/sch.size).toLocaleString('en-NG',{style:'currency', currency:'NGN'})}</td>
+    </tr>
+`);
+const salTable = `
+<h2>School Total Payable Salary</h2>
+<div class="table-responsive">
+<table class="table table-striped table-sm">
+  <thead class='oxblood'>
+    <tr>
+      <th>S/No.</th>
+      <th>School</th>
+      <th>Total Salary</th>
+      <th>Staff Size</th>
+      <th>Average</th>
+    </tr>
+  </thead>
+  <tbody>
+    ${dRow}
+  </tbody>
+</table>
+</div>`
+
+document.querySelector('main').innerHTML += salTable;
 }

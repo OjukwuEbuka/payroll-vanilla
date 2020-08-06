@@ -30,7 +30,9 @@ function schoolsTable(res){
             <td>${snum++}</td>
             <td>${sch.school_name}</td>
             <td class='text-center'>${sch.staff}</td>
-            <td class='text-center'><button class='btn btn-outline-primary btn-sm viewStaffBtn'  data-sch='${sch.school_id}'>View</button></td>
+            <td class='text-center'><button class='btn btn-outline-primary btn-sm viewStaffBtn oxline'  data-sch='${sch.school_id}'>
+                <i class='material-icons oxcon'>zoom_in</i>
+            </button></td>
         </tr>
         `
     );
@@ -281,7 +283,9 @@ const genReportsTableFxn = res => {
                 ${(+sch.total_salary_paid).toLocaleString('en-NG', {style:'currency', currency:'NGN'})}
             </td>
             <td>
-                <button class='btn btn-outline oxline schoolReportBtn'data-val='${sch.id}' data-sch='${sch.school_id}'>VIEW</button>
+                <button class='btn btn-outline oxline schoolReportBtn'data-val='${sch.id}' data-sch='${sch.school_id}'>
+                    <i class='material-icons oxcon'>zoom_in</i>
+                </button>
             </td>
         </tr>
 
@@ -345,28 +349,38 @@ function schReportsTableFxn(res){
                 <h5>Date: ${(months[res.date.m])}, ${res.date.y}</h5> 
             </div>
         </div>
-        <table class='table table-bordered table-striped table-responsive table-sm mt-3' >
+        <table class='table table-bordered table-striped table-responsive table-sm mt-3' id='staffReportTable'>
         <thead class='oxblood text-white text-center'>
             <th>S/No.</th>
             <th>Name</th>
             <th>SALARY<br>(${naira})</th>
             ${pay_heads}
             <th>NET PAY<br>(${naira})</th>
+            <th>View</th>
         <thead>
         <tbody>
     `;
     res.report.forEach(st => {
-        let pay_fields = '';
-        res.fields.forEach(field => pay_fields += `<td>${st[field.field_slug]}</td>`);
+        let pay_fields = '', modalObj = {'Grade Salary':st.grade_salary};
+        res.fields.forEach(field => {
+            modalObj[field.field_name] = st[field.field_slug];
+            pay_fields += `<td>${st[field.field_slug]}</td>`
+        });
+        modalObj['Net Pay'] = st.net_pay;
         staffTable += `
         <tr id='${st.StaffID}'>
             <td>${snum++}</td>
-            <td>${st.Lastname+' '+st.Firstname+' '+st.Other_names}</td>            
+            <td class='nameCell'>${st.Lastname+' '+st.Firstname+' '+st.Other_names}</td>            
             <td class='gradeSalary' data-pay='${st.grade_salary}'>
                 ${(+st.grade_salary).toLocaleString('en-NG')}
             </td>
             ${pay_fields}
             <td class='netSalary'>${st.net_pay}</td>
+            <td class='text-center'>
+                <button class='btn oxline staffReportModal' data-record='${JSON.stringify(modalObj)}'>
+                <i class='material-icons oxcon'>zoom_in</i>
+                </button>
+            </td>
         </tr>
         `
     });

@@ -7,16 +7,18 @@ if($_SERVER['CONTENT_TYPE'] == 'application/json'){
     $jsonDetails = json_decode(file_get_contents('php://input'), true) ?: [];
 }
 
+$exclud = ['0', '3', '11', '5', '2', '9', '1', '21'];
+
 switch ($jsonDetails['fetch']) {
     case 'total_chart':
-        $sch_query = $conn->query("SELECT ps.school_id, SUM(p.grade_salary) as salary, sc.Schoolname FROM `payroll_staff_grade_level` ps LEFT JOIN payroll_salary_structure p ON ps.grade_level=p.grade_level LEFT JOIN sch_config sc ON ps.school_id=sc.school_id GROUP BY ps.school_id");
-
+        $sch_query = $conn->query("SELECT ps.school_id, COUNT(ps.school_id) as size, SUM(p.grade_salary) as salary, sc.Schoolname FROM `payroll_staff_grade_level` ps LEFT JOIN payroll_salary_structure p ON ps.grade_level=p.grade_level LEFT JOIN sch_config sc ON ps.school_id=sc.school_id WHERE ps.school_id NOT IN (".implode(', ', $exclud).") GROUP BY ps.school_id  ORDER BY sc.Schoolname ASC");
+        // , COUNT(t.StaffID) as staff LEFT JOIN sch_staff t ON t.school_id=sc.school_id 
         echo json_encode(getQuery($sch_query));
         break;
 
     case 'schools':
         /********** Fetch All Schools************** */
-        $sch_query = $conn->query("SELECT s.*, COUNT(t.StaffID) as staff FROM schools s LEFT JOIN sch_staff t ON s.school_id = t.school_id WHERE s.status='1'  GROUP BY s.school_id ORDER BY s.school_name ASC");
+        $sch_query = $conn->query("SELECT s.*, COUNT(t.StaffID) as staff FROM schools s LEFT JOIN sch_staff t ON s.school_id = t.school_id WHERE s.status='1' AND s.school_id NOT IN (".implode(', ', $exclud).")  GROUP BY s.school_id ORDER BY s.school_name ASC");
         // print_r($sch_query);
         $schoolArr = getQuery($sch_query);
         
@@ -27,11 +29,11 @@ switch ($jsonDetails['fetch']) {
         $payMonth = $jsonDetails['searchDate']['m'] + 1;
         $payYear = $jsonDetails['searchDate']['y'];
         /********** Fetch All Schools************** */
-        $sch_query = $conn->query("SELECT s.*, COUNT(t.StaffID) as staff FROM schools s LEFT JOIN sch_staff t ON s.school_id = t.school_id WHERE s.status='1'  GROUP BY s.school_id ORDER BY s.school_name ASC");
+        $sch_query = $conn->query("SELECT s.*, COUNT(t.StaffID) as staff FROM schools s LEFT JOIN sch_staff t ON s.school_id = t.school_id WHERE s.status='1' AND s.school_id NOT IN (".implode(', ', $exclud).")  GROUP BY s.school_id ORDER BY s.school_name ASC");
         // print_r($sch_query);
         $schoolArr = getQuery($sch_query);
         
-        $sal_qs = $conn->query("SELECT ps.school_id, SUM(p.grade_salary) as salary FROM `payroll_staff_grade_level` ps LEFT JOIN payroll_salary_structure p ON ps.grade_level=p.grade_level GROUP BY ps.school_id");
+        $sal_qs = $conn->query("SELECT ps.school_id, SUM(p.grade_salary) as salary FROM `payroll_staff_grade_level` ps LEFT JOIN payroll_salary_structure p ON ps.grade_level=p.grade_level WHERE Ps.school_id NOT IN (".implode(', ', $exclud).") GROUP BY ps.school_id");
         $salArr = getQuery($sal_qs);
 
         $pay_stats = $conn->query("SELECT id, school_id, pay_date FROM payroll_date WHERE month(pay_date) = '$payMonth' AND year(pay_date)='$payYear' ");

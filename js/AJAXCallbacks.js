@@ -220,9 +220,42 @@ const payrollReportCallBack =  res => {
         ${page.schReportsTableFxn(res)}
     `;
     document.querySelector('main').innerHTML = pageContent;
-    // schoolReportBtnInit();
+    staffReportFxn()
     return pageContent;
 }
+
+/********** Staff Report Modal Btn*********** */
+function staffReportFxn(){
+    document.querySelectorAll('#staffReportTable tbody tr').forEach(tRow => {
+        let btn = tRow.querySelector('.staffReportModal');
+        btn.addEventListener('click', e => {
+            e.preventDefault();
+            console.log('report')
+            let stModal = document.querySelector('#payrollModal'),
+                stBody = `<h5 class='text-center' border-bottom border-dark>
+                    ${tRow.querySelector('.nameCell').textContent}</h5>
+                    <table><tbody>`,
+                staff = JSON.parse(btn.dataset.record);
+            stModal.querySelector('#payrollModalLabel').textContent = `${document.querySelector('#sch_name').textContent}`;
+            for (const [key, val] of Object.entries(staff)) {
+                stBody += `
+                    <tr>
+                        <th>${key}</th>
+                        <td class='pl-4'>${key == 'Net Pay' ? 
+                            (+val).toLocaleString('en-NG', {style:'currency', currency: 'NGN'}) : 
+                            val}
+                        </td>
+                    </tr>`
+            }
+            stBody += '</tbody></table>'
+            stModal.querySelector('.modal-body').innerHTML = stBody;
+            stModal.querySelector('.modal-dialog').classList.remove('wider');
+            stModal.querySelector('.modal-body').classList.remove('row');
+            $('#payrollModal').modal('show');
+        })
+    })
+}
+
 
 
 export {
